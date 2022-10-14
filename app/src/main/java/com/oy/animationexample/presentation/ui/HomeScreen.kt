@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.oy.animationexample.domain.model.BannerImage
 import com.oy.animationexample.presentation.components.Banner
+import com.oy.animationexample.presentation.components.VerticalPagerWithTabs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -76,7 +77,11 @@ class HomeScreen: Fragment() {
                         }
                     }
                 ){
-
+                    VerticalPagerWithTabs(
+                        isSelected = isSelected,
+                        tabs = tabs,
+                        onSelected = {viewModel.onSelected(isSelected)}
+                    )
                 }
 
             }
