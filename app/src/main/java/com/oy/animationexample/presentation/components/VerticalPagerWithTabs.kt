@@ -13,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,11 +40,6 @@ fun VerticalPagerWithTabs(
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
 
-        val backgroundColor = mutableStateOf(Color.LightGray)
-
-        if (isSelected)backgroundColor.value = Color.Red
-
-
         Tabs(
             tabs = tabs,
             onSelected = {onSelected(isSelected)},
@@ -60,7 +57,9 @@ fun VerticalPagerWithTabs(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .background(color = backgroundColor.value),
+                .background(color =
+                    Color.LightGray
+                ),
 
             ) { page ->
             //to do
@@ -109,6 +108,7 @@ fun Tabs(
                 scope = scope,
                 pagerState = pagerState,
                 iconImage = tab.second,
+                onSelected = {onSelected(false)},
                 isSelected = currentIndex.value == index,
                 contextType = contextType
             )
@@ -128,6 +128,7 @@ fun Tab(
     scope: CoroutineScope,
     pagerState: PagerState,
     iconImage: ImageVector,
+    onSelected:(Boolean) -> Unit,
     isSelected:Boolean = false,
     contextType:String = "ICON_TEXT",
 
@@ -145,15 +146,12 @@ fun Tab(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-//            .clickable (
-//                onClick = {
-//                    selected.value = !selected.value
-//
-//                }
-//            )
             .toggleable(
                 value = isSelected,
                 onValueChange = {
+
+                    onSelected(isSelected)
+
                     scope.launch {
                         when{
                             currentIndex.value > index -> {
@@ -171,9 +169,11 @@ fun Tab(
                     }
                 }
             ),
-        border = BorderStroke(1.dp, Color.Black),
+//        border = BorderStroke(1.dp, Color.Black),
         elevation = 4.dp,
-        backgroundColor = if(isSelected) Color.Red else Color.LightGray
+        backgroundColor = if(isSelected)
+                            Color.DarkGray.copy(alpha = 0.2f)
+                          else Color.LightGray
 
     ) {
         Row(
